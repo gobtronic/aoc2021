@@ -8,17 +8,15 @@ fn main() {
 mod day {
     pub fn process() -> i32 {
         if let Ok(values) = super::tools::read_values::<usize>("src/day1/values.txt") {
-            let mut count = 0;
-            let mut prev: Option<usize> = None;
-            for value in values.iter() {
-                if let Some(prev) = prev {
-                    if value > &prev {
-                        count += 1;
+            let (_, count) = values.iter().fold((None, 0), |(last, count), val| {
+                if let Some(last) = last {
+                    if val > last {
+                        return (Some(val), count + 1);
                     }
                 }
 
-                prev = Some(*value);
-            }
+                (Some(val), count)
+            });
 
             return count;
         }
@@ -30,36 +28,21 @@ mod day {
 mod bonus {
     pub fn process() -> i32 {
         if let Ok(values) = super::tools::read_values::<usize>("src/day1/values.txt") {
-            let mut count = 0;
-            let mut prev_sum: Option<usize> = None;
-            for (i, _) in values.iter().enumerate() {
-                let i_sum = three_sum(i, &values);
-                match i_sum {
-                    Some(i_sum) => {
-                        if let Some(prev_sum) = prev_sum {
-                            if i_sum > prev_sum {
-                                count += 1;
-                            }
-                        }
-
-                        prev_sum = Some(i_sum);
+            let (_, count) = values.windows(3).fold((None, 0), |(last, count), win| {
+                let sum = win.iter().sum::<usize>();
+                if let Some(last) = last {
+                    if sum > last {
+                        return (Some(sum), count + 1);
                     }
-                    None => break,
                 }
-            }
+
+                (Some(sum), count)
+            });
 
             return count;
         }
 
         0
-    }
-
-    fn three_sum(start: usize, values: &[usize]) -> Option<usize> {
-        if start + 2 >= values.len() {
-            return None;
-        }
-
-        Some(values[start] + values[start + 1_usize] + values[start + 2_usize])
     }
 }
 
