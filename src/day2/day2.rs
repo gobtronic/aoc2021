@@ -1,8 +1,8 @@
 mod tools;
 
 fn main() {
-    println!("Day result: {}", day::process());
-    println!("Bonus result: {}", bonus::process());
+    println!("Day result: {}", day::process(false));
+    println!("Bonus result: {}", day::process(true));
 }
 
 struct Submarine {
@@ -67,30 +67,17 @@ impl Command {
 mod day {
     use crate::{Command, Submarine};
 
-    pub fn process() -> i32 {
+    pub fn process(bonus: bool) -> i32 {
         let mut sub = Submarine::new();
 
         if let Ok(values) = super::tools::read_values::<String>("src/day2/values.txt") {
             for value in values {
                 let cmd = Command::new(value);
-                sub.process(cmd);
-            }
-        }
-
-        sub.distance * sub.depth
-    }
-}
-
-mod bonus {
-    use crate::{Command, Submarine};
-
-    pub fn process() -> i32 {
-        let mut sub = Submarine::new();
-
-        if let Ok(values) = super::tools::read_values::<String>("src/day2/values.txt") {
-            for value in values {
-                let cmd = Command::new(value);
-                sub.advanced_process(cmd);
+                if bonus {
+                    sub.advanced_process(cmd);
+                } else {
+                    sub.process(cmd);
+                }
             }
         }
 
@@ -102,11 +89,11 @@ mod bonus {
 mod tests {
     #[test]
     fn day() {
-        assert_eq!(super::day::process(), 1936494);
+        assert_eq!(super::day::process(false), 1936494);
     }
 
     #[test]
     fn bonus() {
-        assert_eq!(super::bonus::process(), 1997106066);
+        assert_eq!(super::day::process(true), 1997106066);
     }
 }
