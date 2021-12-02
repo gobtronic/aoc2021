@@ -1,7 +1,7 @@
 mod tools;
 
 fn main() {
-    println!("Main result: {}", day::process());
+    println!("Day result: {}", day::process());
     println!("Bonus result: {}", bonus::process());
 }
 
