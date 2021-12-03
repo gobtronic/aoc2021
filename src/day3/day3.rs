@@ -15,12 +15,14 @@ mod day {
 
             let mut gamma_bits: Vec<u8> = vec![];
             for i in 0..12 {
+                // Get all bits that are on in the column i
                 let on_bits: &Vec<i64> = &int_values
                     .iter()
                     .map(|value| value >> i & 1)
                     .filter(|value| *value == 1)
                     .collect();
 
+                // Test if there is more off bits than on bits
                 if int_values.len() - on_bits.len() > on_bits.len() {
                     gamma_bits.push(0);
                 } else {
@@ -32,6 +34,7 @@ mod day {
             let gamma_str: String = gamma_bits.iter().map(|value| value.to_string()).collect();
             let gamma_rate = u32::from_str_radix(&gamma_str, 2).unwrap_or(0);
 
+            // Toggle gamma_bits to build epsilon_bits
             let epsilon_bits: Vec<u8> = gamma_bits
                 .iter()
                 .map(|b| {
