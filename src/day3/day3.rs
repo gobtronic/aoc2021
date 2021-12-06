@@ -1,8 +1,8 @@
 mod tools;
 
 fn main() {
-    let day = day::process();
-    println!("Day result: {}", day);
+    println!("Day result: {}", day::process());
+    println!("Bonus result: {}", bonus::process());
 }
 
 mod day {
@@ -51,5 +51,66 @@ mod day {
         }
 
         0
+    }
+}
+
+mod bonus {
+    pub fn process() -> i64 {
+        if let Ok(values) = super::tools::read_values::<String>("src/day3/values.txt") {
+            let int_values: Vec<i64> = values
+                .iter()
+                .flat_map(|value| i64::from_str_radix(value, 2))
+                .collect();
+
+            let oxygen_values = recursive_common_bit(0, int_values.clone(), false);
+            let oxygen = oxygen_values.first().unwrap_or(&0);
+            let co2_values = recursive_common_bit(0, int_values, true);
+            let co2 = co2_values.first().unwrap_or(&0);
+
+            return oxygen * co2;
+        }
+
+        0
+    }
+
+    fn recursive_common_bit(pos: i32, values: Vec<i64>, inverted: bool) -> Vec<i64> {
+        let on_bits: Vec<i64> = values
+            .iter()
+            .map(|value| value & (1 << 11 - pos))
+            .filter(|value| *value == 2_i64.pow(11 - pos as u32))
+            .collect();
+
+        let dominant_b: i64;
+        let off_b_count = values.len() - on_bits.len();
+
+        if off_b_count > on_bits.len() {
+            dominant_b = 0;
+        } else if off_b_count == on_bits.len() {
+            if inverted {
+                dominant_b = 0;
+            } else {
+                dominant_b = 1;
+            }
+        } else {
+            dominant_b = 1
+        }
+
+        let filtered_values: Vec<i64> = values
+            .into_iter()
+            .filter(|value| {
+                let masked_value = value & (1 << 11 - pos);
+                if dominant_b == 0 {
+                    masked_value == 0
+                } else {
+                    masked_value == 2_i64.pow(11 - pos as u32)
+                }
+            })
+            .collect();
+
+        if pos != 11 {
+            return recursive_common_bit(pos + 1, filtered_values, inverted);
+        }
+
+        filtered_values
     }
 }
