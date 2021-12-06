@@ -6,7 +6,7 @@ fn main() {
 }
 
 pub struct BingoGrid {
-    numbers: [[u8; 8]; 8],
+    numbers: [[(u8, bool); 8]; 8],
 }
 
 mod day {
@@ -14,6 +14,7 @@ mod day {
     
     pub fn process() -> u32 {
         if let Ok(values) = super::tools::read_values::<String>("src/day4/values.txt") {
+            let values: Vec<&str> = values.into_iter().map(|v| &v).collect();
             let mut grids: Vec<BingoGrid> = vec![];
             let cur_grid: &BingoGrid;
             for (i, line) in values.iter().enumerate() {
@@ -21,7 +22,7 @@ mod day {
                     (0, _) => {
 
                     },
-                    (_, "") => {
+                    (_, &" ") => {
 
                     },
                     (_, line) => {

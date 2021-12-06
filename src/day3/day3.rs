@@ -8,15 +8,15 @@ fn main() {
 mod day {
     pub fn process() -> u32 {
         if let Ok(values) = super::tools::read_values::<String>("src/day3/values.txt") {
-            let int_values: Vec<i64> = values
+            let int_values: Vec<u64> = values
                 .iter()
-                .flat_map(|value| i64::from_str_radix(value, 2))
+                .flat_map(|value| u64::from_str_radix(value, 2))
                 .collect();
 
             let mut gamma_bits: Vec<u8> = vec![];
             for i in 0..12 {
                 // Get all bits that are on in the column i
-                let on_bits: &Vec<i64> = &int_values
+                let on_bits: &Vec<u64> = &int_values
                     .iter()
                     .map(|value| value >> i & 1)
                     .filter(|value| *value == 1)
@@ -55,11 +55,11 @@ mod day {
 }
 
 mod bonus {
-    pub fn process() -> i64 {
+    pub fn process() -> u64 {
         if let Ok(values) = super::tools::read_values::<String>("src/day3/values.txt") {
-            let int_values: Vec<i64> = values
+            let int_values: Vec<u64> = values
                 .iter()
-                .flat_map(|value| i64::from_str_radix(value, 2))
+                .flat_map(|value| u64::from_str_radix(value, 2))
                 .collect();
 
             let oxygen_values = recursive_common_bit(0, int_values.clone(), false);
@@ -73,8 +73,8 @@ mod bonus {
         0
     }
 
-    fn recursive_common_bit(pos: i32, values: Vec<i64>, inverted: bool) -> Vec<i64> {
-        let on_bits: Vec<i64> = values
+    fn recursive_common_bit(pos: i32, values: Vec<u64>, inverted: bool) -> Vec<u64> {
+        let on_bits: Vec<u64> = values
             .iter()
             // Some examples for pos == 0: 
             // Masks 1110_0110_0000 to 1000_0000_0000
@@ -82,41 +82,42 @@ mod bonus {
             .map(|value| value & (1 << 11 - pos))
             // For pos == 0:
             // Filters all values that are == 2^11 (others are == 0)
-            .filter(|value| *value == 2_i64.pow(11 - pos as u32))
+            .filter(|value| *value == 2_u64.pow(11 - pos as u32))
             // We have the number of on bits (== 1)
             .collect();
 
         // What dominant bit are we looking for
-        let dominant_b: i64;
         let off_b_count = values.len() - on_bits.len();
-
-        if off_b_count > on_bits.len() {
-            dominant_b = 0;
-        } else if off_b_count == on_bits.len() {
-            if inverted {
-                dominant_b = 0;
-            } else {
+        let dominant_b: u8;
+        if inverted {
+            if on_bits.len() < off_b_count {
                 dominant_b = 1;
+            } else {
+                dominant_b = 0;
             }
         } else {
-            dominant_b = 1
+            if on_bits.len() >= off_b_count {
+                dominant_b = 1;
+            } else {
+                dominant_b = 0;
+            }
         }
 
         // Same operation as before, we mask values and get all values that have the dominant bat required at `pos`
-        let filtered_values: Vec<i64> = values
+        let filtered_values: Vec<u64> = values
             .into_iter()
             .filter(|value| {
                 let masked_value = value & (1 << 11 - pos);
                 if dominant_b == 0 {
                     masked_value == 0
                 } else {
-                    masked_value == 2_i64.pow(11 - pos as u32)
+                    masked_value == 2_u64.pow(11 - pos as u32)
                 }
             })
             .collect();
 
         // Recursive until last pos (== 11)
-        if pos != 11 {
+        if pos != 11 && filtered_values.len() > 1 {
             return recursive_common_bit(pos + 1, filtered_values, inverted);
         }
 
