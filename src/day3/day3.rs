@@ -76,10 +76,17 @@ mod bonus {
     fn recursive_common_bit(pos: i32, values: Vec<i64>, inverted: bool) -> Vec<i64> {
         let on_bits: Vec<i64> = values
             .iter()
+            // Some examples for pos == 0: 
+            // Masks 1110_0110_0000 to 1000_0000_0000
+            // Or 0101_0000_0000 to 0000_0000_0000
             .map(|value| value & (1 << 11 - pos))
+            // For pos == 0:
+            // Filters all values that are == 2^11 (others are == 0)
             .filter(|value| *value == 2_i64.pow(11 - pos as u32))
+            // We have the number of on bits (== 1)
             .collect();
 
+        // What dominant bit are we looking for
         let dominant_b: i64;
         let off_b_count = values.len() - on_bits.len();
 
@@ -95,6 +102,7 @@ mod bonus {
             dominant_b = 1
         }
 
+        // Same operation as before, we mask values and get all values that have the dominant bat required at `pos`
         let filtered_values: Vec<i64> = values
             .into_iter()
             .filter(|value| {
@@ -107,6 +115,7 @@ mod bonus {
             })
             .collect();
 
+        // Recursive until last pos (== 11)
         if pos != 11 {
             return recursive_common_bit(pos + 1, filtered_values, inverted);
         }
