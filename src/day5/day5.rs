@@ -255,8 +255,8 @@ mod day {
 
 #[cfg(test)]
 mod tests {
+    use crate::{Diagram, Point, VentLine};
     use std::str::FromStr;
-    use crate::{Point, Diagram, VentLine};
 
     #[test]
     fn mock_test() {
@@ -270,13 +270,13 @@ mod tests {
             "0,9 -> 2,9".to_string(),
             "3,4 -> 1,4".to_string(),
             "0,0 -> 8,8".to_string(),
-            "5,5 -> 8,2".to_string()
+            "5,5 -> 8,2".to_string(),
         ];
 
         let mut diagram = Diagram::default();
         let vent_lines: Vec<VentLine> = values.iter().flat_map(|v| VentLine::from_str(v)).collect();
         diagram.process(vent_lines, false);
-        let count =  diagram
+        let count = diagram
             .values
             .iter()
             .filter(|(_, collisions)| collisions > &&1)
@@ -286,7 +286,7 @@ mod tests {
         let mut diagram = Diagram::default();
         let vent_lines: Vec<VentLine> = values.iter().flat_map(|v| VentLine::from_str(v)).collect();
         diagram.process(vent_lines, true);
-        let count =  diagram
+        let count = diagram
             .values
             .iter()
             .filter(|(_, collisions)| collisions > &&1)
