@@ -76,7 +76,7 @@ mod bonus {
     fn recursive_common_bit(pos: i32, values: Vec<u64>, inverted: bool) -> Vec<u64> {
         let on_bits: Vec<u64> = values
             .iter()
-            // Some examples for pos == 0: 
+            // Some examples for pos == 0:
             // Masks 1110_0110_0000 to 1000_0000_0000
             // Or 0101_0000_0000 to 0000_0000_0000
             .map(|value| value & (1 << 11 - pos))
