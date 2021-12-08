@@ -78,6 +78,17 @@ mod tests {
     use crate::Lanternfish;
 
     #[test]
+    fn mathematics_how_do_they_work() {
+        let mut values: Vec<Lanternfish> = vec![Lanternfish {
+            timer: 3,
+            children: vec![],
+        }];
+
+        let total = (((80 - 8) / 6) as f32).floor().powf(2_f32);
+        assert_eq!(total, 1154_f32);
+    }
+
+    #[test]
     fn day() {
         let mut values: Vec<Lanternfish> = vec![
             Lanternfish {
